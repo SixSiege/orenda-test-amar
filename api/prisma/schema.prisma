@@ -14,38 +14,38 @@ datasource db {
 }
 
 model customers {
-  id_cust       Int       @id @default(autoincrement())
-  name          String    @db.VarChar(255)
-  phone         String    @db.VarChar(12)
-  email         String    @db.VarChar(255)
-  address       String    @db.VarChar(255)
-  orders        orders[]
+  customerId          Int                @id @default(autoincrement())
+  customerName        String             @db.VarChar(255)
+  customerPhone       String             @db.VarChar(12)
+  customerEmail       String             @db.VarChar(255)
+  customerAddress     String             @db.VarChar(255)
+  Orders              orders[]
 }
 
 model products {
-  id_product    Int       @id @default(autoincrement())
-  prod_name     String    @db.VarChar(255)
-  prod_unit     Int       @db.Int()
-  prod_price    Int       @db.Int()
-  productOrders productOrders[]
+  productId           Int                @id @default(autoincrement())
+  productName         String             @db.VarChar(255)
+  productUnit         Int                @db.Int()
+  productPrice        Int                @db.Int()
+  ProductOrders       ProductOrders[]
 }
 
 model orders {
-  id_orders     Int         @id @default(autoincrement())
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  discount      Decimal     @db.Decimal()
-  totalPrice    Int         @db.Int()
-  customers     customers   @relation(fields: [id_cust], references: [id_cust])
-  id_cust       Int
-  productOrders productOrders[]
+  ordersId            Int                @id @default(autoincrement())
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  orderDiscount       Decimal            @db.Decimal()
+  totalPrice          Int                @db.Int()
+  customers           customers          @relation(fields: [customerId], references: [customerId])
+  customerId          Int
+  ProductOrders       ProductOrders[]
 }
 
-model productOrders {
-  id_prodOrders   Int           @id @default(autoincrement())
-  orders          orders        @relation(fields: [id_orders], references: [id_orders])
-  id_orders       Int
-  products        products      @relation(fields: [product_id], references: [id_product])
-  product_id      Int
-  quantity        Int           @db.Int()
+model ProductOrders {
+  prodOrdersId        Int                @id @default(autoincrement())
+  Orders              orders             @relation(fields: [ordersId], references: [ordersId])
+  ordersId            Int
+  Products            products           @relation(fields: [productId], references: [productId])
+  productId           Int
+  prodOrderQty        Int                @db.Int()
 }
