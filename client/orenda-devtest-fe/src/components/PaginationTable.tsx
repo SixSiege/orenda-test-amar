@@ -13,7 +13,7 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 
 interface Column {
-  id: "name" | "phone" | "email" | "address";
+  id: "customerName" | "customerPhone" | "customerEmail" | "customerAddress";
   label: string;
   minWidth?: number;
   align?: "right";
@@ -21,16 +21,16 @@ interface Column {
 }
 
 const columns: readonly Column[] = [
-  { id: "name", label: "Customer Name", minWidth: 170 },
-  { id: "phone", label: "Phone Number", minWidth: 100 },
+  { id: "customerName", label: "Customer Name", minWidth: 170 },
+  { id: "customerPhone", label: "Phone Number", minWidth: 100 },
   {
-    id: "email",
+    id: "customerEmail",
     label: "Email Address",
     minWidth: 170,
     align: "right",
   },
   {
-    id: "address",
+    id: "customerAddress",
     label: "Address",
     minWidth: 170,
     align: "right",
@@ -40,11 +40,11 @@ const columns: readonly Column[] = [
 const rows = [];
 
 interface DataList {
-  id: number,
-  name: string,
-  phone: string,
-  email: string,
-  address: string
+  customerId: number,
+  customerName: string,
+  customerPhone: string,
+  customerEmail: string,
+  customerAddress: string
 }
 
 export default function StickyHeadTable() {
@@ -54,19 +54,21 @@ export default function StickyHeadTable() {
   const [clickedRowId, setRowId] = React.useState<number>();
 
   React.useEffect(() => {
-    axios.get("http://localhost:6969/customers").then((res) => {
+    axios.get<DataList[]>("http://localhost:6969/customers").then((res) => {
+      console.log(res.data)
       setRows(res.data)
       setUnfilteredData(res.data)
+      console.log(data)
     });
-  }, [])
+  })
 
   const requestSearch = (searchedVal: string) => {
     if (!searchedVal) {
       setRows(data)
     } else {
       const filteredRows = rows.filter((row) => {
-        console.log(row.name.toLowerCase());
-        return row.name.includes(searchedVal);
+        console.log(row.customerName.toLowerCase());
+        return row.customerName.includes(searchedVal);
       });
       setRows(filteredRows);
     }
@@ -99,7 +101,7 @@ export default function StickyHeadTable() {
   const deleteData = (id: number) => {
     setAnchorEl(null);
     axios.delete(`http://localhost:6969/customers/${id}`).then(() => {
-      setRows(rows.filter(customer => customer.id !== clickedRowId))
+      setRows(rows.filter(customer => customer.customerId !== clickedRowId))
     })
   }
 
@@ -145,7 +147,7 @@ export default function StickyHeadTable() {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.customerId}>
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
@@ -162,21 +164,21 @@ export default function StickyHeadTable() {
                         aria-controls={open ? "basic-menu" : undefined}
                         aria-haspopup="true"
                         aria-expanded={open ? "true" : undefined}
-                        onClick={(event) => handleClick(event, row.id)}
+                        onClick={(event) => handleClick(event, row.customerId)}
                       >
                         <MoreVert />
                       </IconButton>
                       <Menu
                         id="basic-menu"
                         anchorEl={anchorEl}
-                        open={open && clickedRowId === row.id}
+                        open={open && clickedRowId === row.customerId}
                         onClose={handleClose}
                         MenuListProps={{
                           "aria-labelledby": "basic-button",
                         }}
                       >
-                        <MenuItem onClick={() => navigate(`/edit-customer/`, { state: { id: row.id } })}>Edit</MenuItem>
-                        <MenuItem onClick={() => deleteData(row.id)}>Delete</MenuItem>
+                        <MenuItem onClick={() => navigate(`/edit-customer/`, { state: { id: row.customerId } })}>Edit</MenuItem>
+                        <MenuItem onClick={() => deleteData(row.customerId)}>Delete</MenuItem>
                       </Menu>
                     </TableCell>
                   </TableRow>

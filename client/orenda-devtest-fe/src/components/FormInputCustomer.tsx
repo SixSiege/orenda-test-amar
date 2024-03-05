@@ -15,11 +15,11 @@ import {
 const FormInputCustomer = (props: any) => {
   const navigate = useNavigate();
   const [data, setData] = React.useState({
-    id_cust: '',
-    name: '',
-    phone: '',
-    email: '',
-    address: ''
+    customerId: '',
+    customerName: '',
+    customerPhone: '',
+    customerEmail: '',
+    customerAddress: ''
   });
 
   const { state } = useLocation();
@@ -43,14 +43,14 @@ const FormInputCustomer = (props: any) => {
   }, [state]);
   
   const handleInputData = () => {
-    if(data.name && data.phone && data.email && data.address) {
+    if(data.customerName && data.customerPhone && data.customerEmail && data.customerAddress) {
       if (props.act == 'add') {
         axios.post('http://localhost:6969/customers', data)
         navigate("/")
       }
 
       if (props.act == 'update') {
-        axios.put(`http://localhost:6969/customers/${data.id_cust}`, data)
+        axios.put(`http://localhost:6969/customers/${data.customerId}`, data)
         navigate("/")
       }
     } else {
@@ -79,9 +79,9 @@ const FormInputCustomer = (props: any) => {
                       label="Customer Name"
                       variant="outlined"
                       fullWidth
-                      value={data.name}
+                      value={data.customerName}
                       required
-                      onChange={(e) => setData({...data, name: e.target.value})}
+                      onChange={(e) => setData({...data, customerName: e.target.value})}
                     />
                   </Grid>
                   <Grid item xs={6}>
@@ -90,9 +90,9 @@ const FormInputCustomer = (props: any) => {
                       label="Phone Number"
                       variant="outlined"
                       fullWidth
-                      value={data.phone}
+                      value={data.customerPhone}
                       required
-                      onChange={(e) => setData({...data, phone: e.target.value})}
+                      onChange={(e) => setData({...data, customerPhone: e.target.value})}
                     />
                   </Grid>
                   <Grid item xs={6}>
@@ -101,9 +101,9 @@ const FormInputCustomer = (props: any) => {
                       label="Email Address"
                       variant="outlined"
                       fullWidth
-                      value={data.email}
+                      value={data.customerEmail}
                       required
-                      onChange={(e) => setData({...data, email: e.target.value})}
+                      onChange={(e) => setData({...data, customerEmail: e.target.value})}
                     />
                   </Grid>
                 </Grid>
@@ -116,9 +116,9 @@ const FormInputCustomer = (props: any) => {
                   multiline
                   rows={4}
                   fullWidth
-                  value={data.address}
+                  value={data.customerAddress}
                   required
-                  onChange={(e) => setData({...data, address: e.target.value})}
+                  onChange={(e) => setData({...data, customerAddress: e.target.value})}
                 />
               </Grid>
             </Grid>

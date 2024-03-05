@@ -1,5 +1,4 @@
 import React from 'react'
-import ViewCustomer from './pages/customer/ViewCustomer'
 import SideNav from './components/sideNav'
 import theme from './config/theme.ts'
 import './App.css'
