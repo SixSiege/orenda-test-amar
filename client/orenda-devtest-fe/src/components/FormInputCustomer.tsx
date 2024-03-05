@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
 
@@ -13,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const FormInputCustomer = (props) => {
+const FormInputCustomer = (props: any) => {
   const navigate = useNavigate();
   const [data, setData] = React.useState({
     id_cust: '',
@@ -138,7 +137,5 @@ const FormInputCustomer = (props) => {
     </>
   );
 };
-
-FormInputCustomer.propTypes = {};
 
 export default FormInputCustomer;

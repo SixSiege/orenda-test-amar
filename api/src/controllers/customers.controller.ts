@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { customerData } from "../types/customers.types";
 
 const prisma = new PrismaClient();
 
 export default class CustomersController {
   async createCustomer(req: Request, res: Response) {
     try {
-      const { customerName, customerPhone, customerEmail, customerAddress } = req.body;
+      const { customerName, customerPhone, customerEmail, customerAddress }: customerData = req.body;
       const customer = await prisma.customers.create({
         data: { customerName, customerPhone, customerEmail, customerAddress },
       });
@@ -45,7 +46,7 @@ export default class CustomersController {
 
   async updateCustomer(req: Request, res: Response) {
     const { id } = req.params;
-    const { customerName, customerPhone, customerEmail, customerAddress } = req.body;
+    const { customerName, customerPhone, customerEmail, customerAddress }: customerData = req.body;
     try {
       const updatedCustomer = await prisma.customers.update({
         where: {

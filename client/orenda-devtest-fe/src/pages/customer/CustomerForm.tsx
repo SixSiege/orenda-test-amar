@@ -1,9 +1,12 @@
-import React from 'react'
-import { Card, CardContent, Stack, Typography } from '@mui/material'
+import { Card, Typography } from '@mui/material'
 import FormInputCustomer from '../../components/FormInputCustomer'
 import { Link } from 'react-router-dom';
 
-const CustomerForm = props => {
+interface customerProp {
+  act: "add" | "update"
+}
+
+const CustomerForm = (props: customerProp) => {
     let isAdd = false;
     let isEdit = false;
     let secString = "";

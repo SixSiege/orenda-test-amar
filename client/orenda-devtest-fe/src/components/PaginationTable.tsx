@@ -7,13 +7,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { Delete, MoreVert } from "@mui/icons-material";
+import { MoreVert } from "@mui/icons-material";
 import { IconButton, Menu, MenuItem, TextField } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 
 interface Column {
-  id: "name" | "phone" | "email" | "address" | "action";
+  id: "name" | "phone" | "email" | "address";
   label: string;
   minWidth?: number;
   align?: "right";
@@ -39,12 +39,19 @@ const columns: readonly Column[] = [
 
 const rows = [];
 
+interface DataList {
+  id: number,
+  name: string,
+  phone: string,
+  email: string,
+  address: string
+}
+
 export default function StickyHeadTable() {
   const navigate = useNavigate();
-  const [rows, setRows] = React.useState<any[]>([])
-  const [data, setUnfilteredData] = React.useState<any[]>([])
-  const [searched, setSearched] = React.useState<string>("");
-  const [clickedRowId, setRowId] = React.useState<number>(null);
+  const [rows, setRows] = React.useState<DataList[]>([])
+  const [data, setUnfilteredData] = React.useState<DataList[]>([])
+  const [clickedRowId, setRowId] = React.useState<number>();
 
   React.useEffect(() => {
     axios.get("http://localhost:6969/customers").then((res) => {
@@ -89,10 +96,10 @@ export default function StickyHeadTable() {
     setAnchorEl(null);
   };
 
-  const deleteData = (id: any) => {
+  const deleteData = (id: number) => {
     setAnchorEl(null);
     axios.delete(`http://localhost:6969/customers/${id}`).then(() => {
-      setRows(rows.filter(customer => customer.id_cust !== clickedRowId))
+      setRows(rows.filter(customer => customer.id !== clickedRowId))
     })
   }
 
@@ -138,7 +145,7 @@ export default function StickyHeadTable() {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
@@ -155,21 +162,21 @@ export default function StickyHeadTable() {
                         aria-controls={open ? "basic-menu" : undefined}
                         aria-haspopup="true"
                         aria-expanded={open ? "true" : undefined}
-                        onClick={(event) => handleClick(event, row.id_cust)}
+                        onClick={(event) => handleClick(event, row.id)}
                       >
                         <MoreVert />
                       </IconButton>
                       <Menu
                         id="basic-menu"
                         anchorEl={anchorEl}
-                        open={open && clickedRowId === row.id_cust}
+                        open={open && clickedRowId === row.id}
                         onClose={handleClose}
                         MenuListProps={{
                           "aria-labelledby": "basic-button",
                         }}
                       >
-                        <MenuItem onClick={() => navigate(`/edit-customer/`, { state: { id: row.id_cust } })}>Edit</MenuItem>
-                        <MenuItem onClick={() => deleteData(row.id_cust)}>Delete</MenuItem>
+                        <MenuItem onClick={() => navigate(`/edit-customer/`, { state: { id: row.id } })}>Edit</MenuItem>
+                        <MenuItem onClick={() => deleteData(row.id)}>Delete</MenuItem>
                       </Menu>
                     </TableCell>
                   </TableRow>
