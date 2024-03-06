@@ -10,7 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import { MoreVert } from "@mui/icons-material";
 import { IconButton, Menu, MenuItem, TextField } from "@mui/material";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 interface Column {
   id: "customerName" | "customerPhone" | "customerEmail" | "customerAddress";
@@ -37,42 +37,40 @@ const columns: readonly Column[] = [
   },
 ];
 
-const rows = [];
-
 interface DataList {
-  customerId: number,
-  customerName: string,
-  customerPhone: string,
-  customerEmail: string,
-  customerAddress: string
+  customerId: number;
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string;
+  customerAddress: string;
 }
 
 export default function StickyHeadTable() {
   const navigate = useNavigate();
-  const [rows, setRows] = React.useState<DataList[]>([])
-  const [data, setUnfilteredData] = React.useState<DataList[]>([])
+  const [rows, setRows] = React.useState<DataList[]>([]);
   const [clickedRowId, setRowId] = React.useState<number>();
+  const [searchTerm, setSearchTerm] = React.useState<string>('');
 
   React.useEffect(() => {
-    axios.get<DataList[]>("http://localhost:6969/customers").then((res) => {
-      console.log(res.data)
-      setRows(res.data)
-      setUnfilteredData(res.data)
-      console.log(data)
-    });
-  })
+    const fetchData = async () => {
+      try {
+        const res = await axios.get<DataList[]>("http://localhost:6969/customers")
+        setRows(res.data);
+      } catch (err) {
+        return []
+      }
+    };
 
-  const requestSearch = (searchedVal: string) => {
-    if (!searchedVal) {
-      setRows(data)
-    } else {
-      const filteredRows = rows.filter((row) => {
-        console.log(row.customerName.toLowerCase());
-        return row.customerName.includes(searchedVal);
-      });
-      setRows(filteredRows);
-    }
+    fetchData()
+  });
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
   };
+
+  const filteredData = rows.filter(
+    (cust: DataList) => cust.customerName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -90,8 +88,11 @@ export default function StickyHeadTable() {
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>, id: number) => {
-    setRowId(id)
+  const handleClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    id: number
+  ) => {
+    setRowId(id);
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
@@ -101,9 +102,9 @@ export default function StickyHeadTable() {
   const deleteData = (id: number) => {
     setAnchorEl(null);
     axios.delete(`http://localhost:6969/customers/${id}`).then(() => {
-      setRows(rows.filter(customer => customer.customerId !== clickedRowId))
-    })
-  }
+      setRows(rows.filter((customer) => customer.customerId !== clickedRowId));
+    });
+  };
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
@@ -130,8 +131,11 @@ export default function StickyHeadTable() {
             </TableRow>
             <TableRow>
               <TableCell>
-                <TextField label="Search name" variant="outlined"
-                onChange={(searchVal) => requestSearch(searchVal.target.value.toString().toLowerCase())}
+                <TextField
+                  label="Search name"
+                  variant="outlined"
+                  value={searchTerm} 
+                  onChange={handleSearch}
                 ></TextField>
               </TableCell>
               <TableCell>
@@ -143,11 +147,16 @@ export default function StickyHeadTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
+            {filteredData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.customerId}>
+                  <TableRow
+                    hover
+                    role="checkbox"
+                    tabIndex={-1}
+                    key={row.customerId}
+                  >
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
@@ -177,8 +186,18 @@ export default function StickyHeadTable() {
                           "aria-labelledby": "basic-button",
                         }}
                       >
-                        <MenuItem onClick={() => navigate(`/edit-customer/`, { state: { id: row.customerId } })}>Edit</MenuItem>
-                        <MenuItem onClick={() => deleteData(row.customerId)}>Delete</MenuItem>
+                        <MenuItem
+                          onClick={() =>
+                            navigate(`/edit-customer/`, {
+                              state: { id: row.customerId },
+                            })
+                          }
+                        >
+                          Edit
+                        </MenuItem>
+                        <MenuItem onClick={() => deleteData(row.customerId)}>
+                          Delete
+                        </MenuItem>
                       </Menu>
                     </TableCell>
                   </TableRow>
@@ -190,7 +209,7 @@ export default function StickyHeadTable() {
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={rows.length}
+        count={filteredData.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

@@ -6,7 +6,7 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import { Box, CssBaseline, ThemeProvider, Typography } from '@mui/material';
+import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import { BrowserRouter } from 'react-router-dom'
 import AppRoutes from './router/AppRoutes.tsx'
 
